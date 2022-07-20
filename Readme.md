@@ -37,6 +37,12 @@ Backup and unlink `/etc/pam.d/system-auth`, then remove `/etc/pam.d/system-auth-
 
 Since `auth sufficient pam_unix.so` is not set as `required`, you must put the `pam_sshaudit.so` line above `pam_unix.so` .
 
+CentOS 6:
+
+Location: `/lib64/security/pam_sshaudit.so` 
+
+PAM Config: `/etc/pam.d/password-auth` `/etc/pam.d/sshd`
+
 # More simple but obvious way
 
 Use `pam_exec` to record password. Example program written in Golang can be checked in `sshaudit.go`
