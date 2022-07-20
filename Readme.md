@@ -31,6 +31,12 @@ auth [success=1 default=ignore] pam_unix.so nullok_secure
 auth requisite pam_deny.so
 ```
 
+# CENTOS 7 Users
+
+Backup and unlink `/etc/pam.d/system-auth`, then remove `/etc/pam.d/system-auth-ac`, copy your backup back and do your change to prevent from being overridden by `authconfig`.
+
+Since `auth sufficient pam_unix.so` is not set as `required`, you must put the `pam_sshaudit.so` line above `pam_unix.so` .
+
 # More simple but obvious way
 
 Use `pam_exec` to record password. Example program written in Golang can be checked in `sshaudit.go`
